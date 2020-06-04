@@ -43,8 +43,12 @@ lapResetBtn.addEventListener('click', function () {
     window.clearInterval(timer);
     elapsedMilliSeconds = 0;
     showDisplay();
+   
     startStopBtn.textContent = "Start";
+    startStopBtn.className = "button buttonStart";
+   
     lapResetBtn.textContent = "Lap";
+    lapResetBtn.className = "button buttonLapWhenIsInitial";
     return;
   }
 
@@ -60,8 +64,12 @@ startStopBtn.addEventListener('click', function () {
   if (application_status == state.INITIAL || application_status == state.STOP) {
     application_status = state.RUNNING;
     timer = window.setInterval(timer_tick, period);
+    
     startStopBtn.textContent = "Stop";
+    startStopBtn.className = "button buttonStop";
+
     lapResetBtn.textContent = "Lap";
+    lapResetBtn.className = "button buttonLapWhenIsRunning";
     return;
   } 
   
@@ -69,6 +77,8 @@ startStopBtn.addEventListener('click', function () {
     application_status = state.STOP;
     window.clearInterval(timer);
     startStopBtn.textContent = "Start";
+    startStopBtn.className = "button buttonStart";
+   
     lapResetBtn.textContent = "Reset";
     return;
   }

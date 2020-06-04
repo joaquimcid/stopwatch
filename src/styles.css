@@ -12,4 +12,44 @@
 
 body {
   background-color: black;
+  color: white;
+}
+
+.display {
+  color:white;
+  font-size: 100px;
+}
+
+.button {
+  border-radius: 50%;
+  border: white;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  height: 80px;
+  width: 80px;
+}
+
+.buttonStart {
+  background-color: #27380e;
+  color: #72c250;
+}
+
+.buttonStop {
+  background-color: #4f140c;
+  color: #e93c20;
+}
+
+.buttonLapWhenIsInitial {
+  background-color: #1d1d1d;
+  color: #a6a6a6;
+}
+
+.buttonLapWhenIsRunning {
+  background-color: #646464;
+  color: #ffffff;
 }
