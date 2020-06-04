@@ -16,10 +16,12 @@ var timer;
 var displayMilliSeconds = 0;
 var lapMilliSeconds = 0;
 var lapCounter = 0;
+var lapsTimeRecords = [];
+
 
 function timer_tick(){
   displayMilliSeconds += period;
-  showDisplay();
+  showTimeToDisplay(displayMilliSeconds);
 }
 
 function padValue(value) {
@@ -27,25 +29,32 @@ function padValue(value) {
   else return "0" + value;
 }
 
-function showDisplay() {
-  var elapsedSeconds = displayMilliSeconds / 1000;
+function showTimeToDisplay(timeToShow) {
+  var valueToShow = convertMilliSecondsToTime(timeToShow)
 
-  var ms = padValue(Math.floor((displayMilliSeconds % 1000) / 10));
+  display.textContent = valueToShow;
+}
+
+function convertMilliSecondsToTime(milliSecondsValue) {
+  var elapsedSeconds = milliSecondsValue / 1000;
+
+  var ms = padValue(Math.floor((milliSecondsValue % 1000) / 10));
   var s = padValue(Math.floor(elapsedSeconds % 60));
   var m = padValue(Math.floor(elapsedSeconds / 60));
   var h = padValue(Math.floor(elapsedSeconds / 3600));
 
-  display.textContent = m + ":" + s + "," + ms;
-  if ( h!= "00") display.textContent = s + display.textContent;
+  var result = m + ":" + s + "," + ms;
+  if ( h!= "00") result = h + result;
+  
+  return result;
 }
-
 
 lapResetBtn.addEventListener('click', function () {
   if (application_status == state.STOP) {
     application_status = state.INITIAL;
     window.clearInterval(timer);
     displayMilliSeconds = 0;
-    showDisplay();
+    showTimeToDisplay(displayMilliSeconds);
    
     startStopBtn.textContent = "Start";
     startStopBtn.className = "button buttonStart";
@@ -54,20 +63,80 @@ lapResetBtn.addEventListener('click', function () {
     lapResetBtn.className = "button buttonLapWhenIsInitial";
     laps.innerText = "";
     lapCounter = 0;
+    lapsTimeRecords = [];
     lapMilliSeconds = 0;
     return;
   }
 
   if(application_status == state.RUNNING) {
-    var currentLap = displayMilliSeconds - lapMilliSeconds;
+    var currentLapMilliSeconds = displayMilliSeconds - lapMilliSeconds; 
+    lapsTimeRecords.push(currentLapMilliSeconds);
+    var currentLapTime = convertMilliSecondsToTime(currentLapMilliSeconds);
     lapMilliSeconds = displayMilliSeconds;
     lapCounter++;
-    laps.innerText += "Lap " + lapCounter+ " " + currentLap;
-    
+
+    var style = "lapRecord";
+    if (isMinLapRecord(lapsTimeRecords, currentLapMilliSeconds))
+    {
+      style = "lapRecordMinium";
+
+      var element = document.getElementsByClassName(style);
+      if (element.length > 0) {
+        element[0].classList.replace(style, "lapRecord");
+      }
+    } 
+    else if (isMaxLapRecord(lapsTimeRecords, currentLapMilliSeconds)){
+      style = "lapRecordMaxium";
+      var element = document.getElementsByClassName(style);
+      if (element.length > 0) {
+        element[0].classList.replace(style, "lapRecord");
+      }
+    }
+
+    addNewLapRecord("Lap " + lapCounter, currentLapTime, style);
     return;
   }
 
 });
+
+function isMinLapRecord(arrayValue, valueToCheck){
+  var minFound = Math.min.apply(null, arrayValue);
+  return minFound === valueToCheck;
+}
+
+function isMaxLapRecord(arrayValue, valueToCheck){
+  var maxFound = Math.max.apply(null, arrayValue);
+  return maxFound === valueToCheck;
+}
+
+function addNewLapRecord(lapLabel, lapValue, style){
+  /*
+    <p class="lapRecord">
+      <div class="lapRecordLabel"> Lap 1</div>
+      <div class="lapRecordValue"> 00:00,01</div>
+    </p>
+    <br />
+    */
+  var nodeLapRecord = document.createElement("p")
+  nodeLapRecord.className = style;
+  var nodeLapRecordLabel = document.createElement("div");
+  nodeLapRecordLabel.className = "lapRecordLabel";
+  var nodeLapRecordValue = document.createElement("div");
+  nodeLapRecordValue.className = "lapRecordValue";
+
+  var textLapRecordLabel = document.createTextNode(lapLabel);
+  nodeLapRecordLabel.appendChild(textLapRecordLabel);
+
+  var textLapRecordValue = document.createTextNode(lapValue);
+  nodeLapRecordValue.appendChild(textLapRecordValue);
+
+  nodeLapRecord.appendChild(nodeLapRecordLabel);
+  nodeLapRecord.appendChild(nodeLapRecordValue);
+
+  laps.appendChild(nodeLapRecord);
+  laps.appendChild(document.createElement("br"));
+  
+}
 
 startStopBtn.addEventListener('click', function () {
   

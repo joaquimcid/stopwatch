@@ -77,3 +77,23 @@ body {
   background-color: #646464;
   color: #ffffff;
 }
+
+.lapRecord {
+  color: white;
+}
+
+.lapRecordMinium {
+  color: green;
+}
+
+.lapRecordMaxium {
+  color: red;
+}
+
+.lapRecordLabel {
+  float: left;
+}
+
+.lapRecordValue {
+  float: right;
+}
