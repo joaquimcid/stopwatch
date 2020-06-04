@@ -133,9 +133,8 @@ function addNewLapRecord(lapLabel, lapValue, style){
   nodeLapRecord.appendChild(nodeLapRecordLabel);
   nodeLapRecord.appendChild(nodeLapRecordValue);
 
-  laps.appendChild(nodeLapRecord);
-  laps.appendChild(document.createElement("br"));
-  
+  laps.insertBefore(document.createElement("br"), laps.firstChild);
+  laps.insertBefore(nodeLapRecord, laps.firstChild); 
 }
 
 startStopBtn.addEventListener('click', function () {
