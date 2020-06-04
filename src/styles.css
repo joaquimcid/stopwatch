@@ -18,11 +18,13 @@ body {
 .display {
   color:white;
   font-size: 100px;
+  font-family: "Helvetica Neue";
+  src: url(./fonts/HelveticaNeue-UltraLight.otf) format('opentype');
+  font-weight: 600;
+  font-style: 'normal';
 }
 
 .button {
-  border-radius: 50%;
-  border: white;
   color: white;
   padding: 20px;
   text-align: center;
@@ -32,6 +34,10 @@ body {
   margin: 4px 2px;
   height: 80px;
   width: 80px;
+  border-style: double;
+  border-color: black;
+  border-width: 5px;
+  border-radius: 50%;
 }
 
 .buttonStart {
