@@ -15,6 +15,19 @@ body {
   color: white;
 }
 
+.container { 
+  width: 400px;
+	height: 500px; 
+	
+	position: absolute;
+	top:0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+  	
+  margin: auto;
+}
+
 .display {
   color:white;
   font-size: 100px;
@@ -22,6 +35,10 @@ body {
   src: url(./fonts/HelveticaNeue-UltraLight.otf) format('opentype');
   font-weight: 600;
   font-style: 'normal';
+}
+
+.buttons {
+  margin-top: 70px;
 }
 
 .button {
@@ -43,11 +60,13 @@ body {
 .buttonStart {
   background-color: #27380e;
   color: #72c250;
+  float: right;
 }
 
 .buttonStop {
   background-color: #4f140c;
   color: #e93c20;
+  float: right;
 }
 
 .buttonLapWhenIsInitial {
