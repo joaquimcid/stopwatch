@@ -9,13 +9,16 @@ var application_status = state.INITIAL;
 var display = window.document.getElementById("display");
 var lapResetBtn = window.document.getElementById("lapResetBtn");
 var startStopBtn = window.document.getElementById("startStopBtn");
+var laps = window.document.getElementById("laps");
 
 const period = 10;
-var elapsedMilliSeconds = 0;
 var timer;
+var displayMilliSeconds = 0;
+var lapMilliSeconds = 0;
+var lapCounter = 0;
 
 function timer_tick(){
-  elapsedMilliSeconds += period;
+  displayMilliSeconds += period;
   showDisplay();
 }
 
@@ -25,9 +28,9 @@ function padValue(value) {
 }
 
 function showDisplay() {
-  var elapsedSeconds = elapsedMilliSeconds / 1000;
+  var elapsedSeconds = displayMilliSeconds / 1000;
 
-  var ms = padValue(Math.floor((elapsedMilliSeconds % 1000) / 10));
+  var ms = padValue(Math.floor((displayMilliSeconds % 1000) / 10));
   var s = padValue(Math.floor(elapsedSeconds % 60));
   var m = padValue(Math.floor(elapsedSeconds / 60));
   var h = padValue(Math.floor(elapsedSeconds / 3600));
@@ -41,7 +44,7 @@ lapResetBtn.addEventListener('click', function () {
   if (application_status == state.STOP) {
     application_status = state.INITIAL;
     window.clearInterval(timer);
-    elapsedMilliSeconds = 0;
+    displayMilliSeconds = 0;
     showDisplay();
    
     startStopBtn.textContent = "Start";
@@ -49,11 +52,18 @@ lapResetBtn.addEventListener('click', function () {
    
     lapResetBtn.textContent = "Lap";
     lapResetBtn.className = "button buttonLapWhenIsInitial";
+    laps.innerText = "";
+    lapCounter = 0;
+    lapMilliSeconds = 0;
     return;
   }
 
   if(application_status == state.RUNNING) {
-    window.alert('LAAAAP');
+    var currentLap = displayMilliSeconds - lapMilliSeconds;
+    lapMilliSeconds = displayMilliSeconds;
+    lapCounter++;
+    laps.innerText += "Lap " + lapCounter+ " " + currentLap;
+    
     return;
   }
 
