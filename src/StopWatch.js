@@ -8,6 +8,9 @@ class StopWatch {
   stop() {
     this.timeStarted = null;
     this.laps = [];
+    this.minLapRecord = null;
+    this.maxLapRecord = null;
+    this.sumOfLapTimes = 0;
   }
   
   pause() {
@@ -26,11 +29,12 @@ class StopWatch {
   newLap() {
     if (this.timeStarted === null) return;
 
-    if (this.laps.length > 0) {
-      let sumOfLapTimes = this.laps.reduce( (total, num) => total + num);
-      this.laps.push(this.elapsedTime() - sumOfLapTimes);
-    }
-    else this.laps.push(this.elapsedTime());
+    let newRecord = (this.laps.length > 0) ? this.elapsedTime() - sumOfLapTimes : this.elapsedTime();
+    this.laps.push(newRecord);
+    this.sumOfLapTimes += newRecord;
+
+    if (this.minLapRecord === null || this.minLapRecord > newRecord) this.minLapRecord = newRecord;
+    if (this.maxLapRecord < newRecord) this.maxLapRecord = newRecord;
   }
   
   laps() {
@@ -38,10 +42,13 @@ class StopWatch {
   }
 
   minLap() {
+    return this.minLapRecord;
     return  Math.min(...this.laps);
   }
   
   maxLap() {
+    return this.maxLapRecord;
+
     return  Math.max(...this.laps);
   }
 }

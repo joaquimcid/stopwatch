@@ -6,43 +6,66 @@ const state = {
 
 const stopWatch = new StopWatch();
 
-var application_status = state.INITIAL;
+let application_status = state.INITIAL;
 
-var display = window.document.getElementById("display");
-var lapResetBtn = window.document.getElementById("lapResetBtn");
-var startStopBtn = window.document.getElementById("startStopBtn");
-var laps = window.document.getElementById("laps");
+let display = window.document.getElementById("display");
+let lapResetBtn = window.document.getElementById("lapResetBtn");
+let startStopBtn = window.document.getElementById("startStopBtn");
+let laps = window.document.getElementById("laps");
 
 const period = 10;
-var timer;
-var displayMilliSeconds = 0;
-var lapCounter = 0;
-var lapsTimeRecords = [];
+let timer;
 
-
-function timer_tick(){
-  showTimeToDisplay(stopWatch.elapsedTime());
+function refresh_display_timer(){
+  printToDisplay(stopWatch.elapsedTime());
 }
 
-function padValue(value) {
-  if (value > 9) return value;
-  else return "0" + value;
-}
-
-function showTimeToDisplay(timeToShow) {
+function printToDisplay(timeToShow) {
   display.textContent = convertMilliSecondsToTime(timeToShow)
 }
 
 function convertMilliSecondsToTime(milliSecondsValue) {
-  var elapsedSeconds = Math.floor(milliSecondsValue / 1000);
+  let elapsedSeconds = Math.floor(milliSecondsValue / 1000);
+  
+  let cs = Math.round((milliSecondsValue % 1000) / 10).toString().padStart(2, 0);
+  let s = (elapsedSeconds % 60).toString().padStart(2, 0);
+  let m = (Math.floor(elapsedSeconds / 60) % 60).toString().padStart(2, 0);
+  let hours = Math.floor(elapsedSeconds / 3600).toString().padStart(2, 0);
+  hours = hours !== '00' ? `${hours}:` : '';
 
-  var cs = padValue(Math.round((milliSecondsValue % 1000) / 10));
-  var s = padValue(elapsedSeconds % 60);
-  var m = padValue(Math.floor(elapsedSeconds / 60));
-  var hours = padValue(Math.floor(elapsedSeconds / 3600));
-  const formattedHours = hours !== '00' ? `${hours}:` : '';
+  return `${hours}${m}:${s},${cs}`;
+}
 
-  return `${formattedHours}${m}:${s},${cs}`;
+function addNewLapRecord(value, index, array) {
+  /*<p class="lapRecord"> <div class="lapRecordLabel"> Lap 1</div> <div class="lapRecordValue"> 00:00,01</div> </p>
+    <br /> */
+  
+  const minStyle = "lapRecordMinium";
+  const maxStyle = "lapRecordMaxium";
+  const defaultStyle = "lapRecord"
+    
+  let nodeLapRecord = document.createElement("p")
+  if (value === stopWatch.minLap()) nodeLapRecord.className = minStyle;
+  else if (value === stopWatch.maxLap()) nodeLapRecord.className = maxStyle;
+  else nodeLapRecord.className = defaultStyle;
+
+  let nodeLapRecordLabel = document.createElement("div");
+  nodeLapRecordLabel.className = "lapRecordLabel";
+  let nodeLapRecordValue = document.createElement("div");
+  nodeLapRecordValue.className = "lapRecordValue";
+
+  let textLapRecordLabel = document.createTextNode( "Lap " + index);
+  nodeLapRecordLabel.appendChild(textLapRecordLabel);
+
+  let valueToPrint = convertMilliSecondsToTime(value);
+  let textLapRecordValue = document.createTextNode(valueToPrint);
+  nodeLapRecordValue.appendChild(textLapRecordValue);
+
+  nodeLapRecord.appendChild(nodeLapRecordLabel);
+  nodeLapRecord.appendChild(nodeLapRecordValue);
+
+  laps.insertBefore(document.createElement("br"), laps.firstChild);
+  laps.insertBefore(nodeLapRecord, laps.firstChild); 
 }
 
 lapResetBtn.addEventListener('click', function () {
@@ -50,7 +73,7 @@ lapResetBtn.addEventListener('click', function () {
     application_status = state.INITIAL;
     //stopWatch = new StopWatch();
     stopWatch.stop();
-    showTimeToDisplay(stopWatch.elapsedTime());
+    printToDisplay(stopWatch.elapsedTime());
 
     window.clearInterval(timer);
     
@@ -60,8 +83,6 @@ lapResetBtn.addEventListener('click', function () {
     lapResetBtn.textContent = "Lap";
     lapResetBtn.className = "button buttonLapWhenIsInitial";
     laps.innerHTML = "";
-    lapCounter = 0;
-    lapsTimeRecords = [];
     return;
   }
 
@@ -76,38 +97,6 @@ lapResetBtn.addEventListener('click', function () {
 
 });
 
-function addNewLapRecord(value, index, array) {
-  /*<p class="lapRecord"> <div class="lapRecordLabel"> Lap 1</div> <div class="lapRecordValue"> 00:00,01</div> </p>
-    <br /> */
-  
-  const minStyle = "lapRecordMinium";
-  const maxStyle = "lapRecordMaxium";
-  const defaultStyle = "lapRecord"
-    
-  var nodeLapRecord = document.createElement("p")
-  if (value === stopWatch.minLap()) nodeLapRecord.className = minStyle;
-  else if (value === stopWatch.maxLap()) nodeLapRecord.className = maxStyle;
-  else nodeLapRecord.className = defaultStyle;
-
-  var nodeLapRecordLabel = document.createElement("div");
-  nodeLapRecordLabel.className = "lapRecordLabel";
-  var nodeLapRecordValue = document.createElement("div");
-  nodeLapRecordValue.className = "lapRecordValue";
-
-  var textLapRecordLabel = document.createTextNode( "Lap " + index);
-  nodeLapRecordLabel.appendChild(textLapRecordLabel);
-
-  var valueToPrint = convertMilliSecondsToTime(value);
-  var textLapRecordValue = document.createTextNode(valueToPrint);
-  nodeLapRecordValue.appendChild(textLapRecordValue);
-
-  nodeLapRecord.appendChild(nodeLapRecordLabel);
-  nodeLapRecord.appendChild(nodeLapRecordValue);
-
-  laps.insertBefore(document.createElement("br"), laps.firstChild);
-  laps.insertBefore(nodeLapRecord, laps.firstChild); 
-}
-
 startStopBtn.addEventListener('click', function () {
   
   if (application_status === state.INITIAL || application_status === state.STOP) {    
@@ -116,7 +105,7 @@ startStopBtn.addEventListener('click', function () {
     else if (application_status === state.STOP) stopWatch.resume();
 
     application_status = state.RUNNING;
-    timer = window.setInterval(timer_tick, period);
+    timer = window.setInterval(refresh_display_timer, period);
 
     startStopBtn.textContent = "Stop";
     startStopBtn.className = "button buttonStop";
