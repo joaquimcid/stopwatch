@@ -1,2 +1,0 @@
-- Start, Stop, Start -> Shows incorrect display time
-- NewLap, NewLap -> Does not create new lap record or does not print it
