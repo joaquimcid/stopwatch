@@ -71,7 +71,7 @@ function addNewLapRecord(value, index, array) {
 lapResetBtn.addEventListener('click', function () {
   if (application_status === state.STOP) {
     application_status = state.INITIAL;
-    //stopWatch = new StopWatch();
+
     stopWatch.stop();
     printToDisplay(stopWatch.elapsedTime());
 
